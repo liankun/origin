@@ -19,12 +19,15 @@ class TH2D;
 class Exogram;
 class MpcExRawHit;
 class TMpcExCalibContainer;
+class mpcRawContainer;
 
 struct MyCluster{
   int arm;
   double x;
   double y;
 };
+
+//git test
 
 class mMpcExAuAuAna:public SubsysReco{
   public:
@@ -57,6 +60,7 @@ class mMpcExAuAuAna:public SubsysReco{
       mpcTowerContainer* _mpc_tower_container;
       MpcExRawHit* _mpcex_raw_hits;
       MpcMap* _mpc_map;
+      mpcRawContainer* _mpc_raw_container;
 
       TH2D* hkey_adc_high;
       TH2D* hkey_adc_low;
@@ -71,13 +75,19 @@ class mMpcExAuAuAna:public SubsysReco{
 
       TH2D* hlayer_adc_high[2];
       TH2D* hlayer_adc_low[2];
+      TH2D* htower_raw;
       TH2D* htower_e;
+      TH2D* htower_tdc;
 
       TH2D* hbbc_nhits[2];
 
       TH2D* hbbc_adc[2];
+      TH2D* hbbc_adc_low[2];
       Exogram* hgrammy_high[2];
       Exogram* hgrammy_low[2];
+      
+      //combine high and low q,use better one;
+      Exogram* hgrammy_combine[2];
 
       //event display
       Exogram* grammyh[2];

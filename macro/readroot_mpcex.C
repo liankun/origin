@@ -1,5 +1,7 @@
 TH1D* hsensor_high[2][8][24];
 TH1D* hsensor_low[2][8][24];
+#include <string>
+#include <iostream>
 void readroot_mpcex(){
   gSystem->Load("libMyMpcEx.so");
   double max_sensor_x[2][8][24] = {{{0.}}};
@@ -22,8 +24,28 @@ void readroot_mpcex(){
       }
     }
   }
+  ifstream sensor_pos("sensor_position.txt");
+  string s;
+  while(getline(sensor_pos,s)){
+    stringstream ss(s);
+    int arm = 0;
+    int layer = 0;
+    int sensor = 0;
+    double x0=0;
+    double x1=0;
+    double y0=0;
+    double y1=0;
+    ss>>arm>>layer>>sensor>>x0>>x1>>y0>>y1;
+    cout <<arm <<" "<<layer<<" "<<sensor<<" "<<x0<<" "<<x1<<" "<<y0<<" "<<y1<<endl;
+    max_sensor_x[arm][layer][sensor] = x1;
+    min_sensor_x[arm][layer][sensor] = x0;
+    max_sensor_y[arm][layer][sensor] = y1;
+    min_sensor_y[arm][layer][sensor] = y0;
+  }
+
+
   MpcExMapper* mapper = MpcExMapper::instance();
-  TFile* rfile = new TFile("work_2016_04_17/AuAuAna_MinBias_NoCMN_Sub-450728.root","READONLY");
+  TFile* rfile = new TFile("AuAuAna_MinBias_NoCMN_Sub-453692.root","READONLY");
   TH2D* hkey_adc_high = (TH2D*)rfile->Get("hkey_adc_high"); 
   TH2D* hkey_adc_low = (TH2D*)rfile->Get("hkey_adc_low");
   for(int i = 0;i < 50000;i++){
@@ -42,17 +64,16 @@ void readroot_mpcex(){
     hsensor_high[arm][layer][index]->Add(htemp0);
     hsensor_low[arm][layer][index]->Add(htemp1);
     
-    if(max_sensor_x[arm][layer][index] < x) max_sensor_x[arm][layer][index] = x;
-    if(max_sensor_y[arm][layer][index] < y) max_sensor_y[arm][layer][index] = y;
-    if(min_sensor_x[arm][layer][index] > x) min_sensor_x[arm][layer][index] = x;
-    if(min_sensor_y[arm][layer][index] > y) min_sensor_y[arm][layer][index] = y; 
+//    if(max_sensor_x[arm][layer][index] < x) max_sensor_x[arm][layer][index] = x;
+//    if(max_sensor_y[arm][layer][index] < y) max_sensor_y[arm][layer][index] = y;
+//    if(min_sensor_x[arm][layer][index] > x) min_sensor_x[arm][layer][index] = x;
+//    if(min_sensor_y[arm][layer][index] > y) min_sensor_y[arm][layer][index] = y; 
   }
   
 
   TFile* rfile = new TFile("output_mpcex_layer.root","RECREATE");
   for(int iarm = 0;iarm < 2;iarm++){
     char cname[100];
-//    sprintf(cname,"c_arm%d",iarm);
 //    TCanvas* c = new TCanvas(cname,cname,800,800);
     for(int ilayer = 0;ilayer < 8;ilayer++){
       char cname[100];
@@ -77,9 +98,9 @@ cout<<iarm<<" "<<ilayer<<" "<<index<<" "<<x0<<" "<<x1<<" "<<y0<<" "<<y1<<endl;
 	}
 	TPad* pad = new TPad(pname,pname,0.5+x0/40.,0.5+y0/40.,0.5+x1/40.,0.5+y1/40.);
         pad->cd();
-	hsensor_high[iarm][ilayer][index]->Draw("");
-	hsensor_low[iarm][ilayer][index]->SetLineColor(kRed);
-	hsensor_low[iarm][ilayer][index]->Draw("same");
+//	hsensor_high[iarm][ilayer][index]->Draw("");
+//	hsensor_low[iarm][ilayer][index]->SetLineColor(kRed);
+	hsensor_low[iarm][ilayer][index]->Draw("");
 	pad->SetLogy();
 //	pad->SetGridx();
 //	pad->SetGridy();
@@ -91,5 +112,4 @@ cout<<iarm<<" "<<ilayer<<" "<<index<<" "<<x0<<" "<<x1<<" "<<y0<<" "<<y1<<endl;
       c->Write();
     }//ilayer old
   }//arm
-
 }

@@ -9,8 +9,6 @@ int readroot_mpc(){
   TH2D* htower_e = (TH2D*)rfile->Get("htower_e");
 
 
-
-
 //  htower_e->Draw("colz");
   
 
@@ -33,9 +31,10 @@ int readroot_mpc(){
       
       float tz = mpcmap->getZ(i+288*iarm);
       if(fabs(tz) < 2) continue;
+      htower_e->SetAxisRange(i,i,"x");
       TH1D* htemp = htower_e->ProjectionY();
       double entries = htemp->GetEntries();
-      if(entries < 10) continue;
+//      if(entries < 10) continue;
       char pname[200];
       sprintf(pname,"tower_%d_%d",iarm,i);
       htemp->SetName(pname);

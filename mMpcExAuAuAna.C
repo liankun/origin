@@ -136,7 +136,7 @@ void mMpcExAuAuAna::set_interface_ptrs(PHCompositeNode* topNode){
 
 int mMpcExAuAuAna::process_event(PHCompositeNode* topNode){
 //  TriggerHelper* myTH = new TriggerHelper(topNode);
-//  int fire_minbias = myTH->trigScaled("BBCLL1(>1 tubes)");
+//  int fire_minbias = myTH->trigScaled("BBCLL1(>0 tubes)");
 //  int fire_ultra = myTH->trigScaled("UltraPeriphMPC");
 //  if(!fire_minbias) return EVENT_OK;
 //  if(!fire_ultra) return EVENT_OK;
@@ -174,12 +174,12 @@ int mMpcExAuAuAna::general_data_check_init(){
     se->registerHistoManager(hm);
   }
  
-  hbbc_nhits[0] = new TH2D("hbbc_nhits_arm0","Number of Hits vs BBC arm 0",200,0,2000,2000,0,50000);
+  hbbc_nhits[0] = new TH2D("hbbc_nhits_arm0","Number of Hits vs BBC arm 0",200,0,400,2000,0,50000);
   hbbc_nhits[0]->GetXaxis()->SetTitle("BBC charge");
   hbbc_nhits[0]->GetYaxis()->SetTitle("Number of hits");
   hm->registerHisto(hbbc_nhits[0]);
 
-  hbbc_nhits[1] = new TH2D("hbbc_nhits_arm1","Number of Hits vs BBC arm 1",200,0,2000,2000,0,50000);
+  hbbc_nhits[1] = new TH2D("hbbc_nhits_arm1","Number of Hits vs BBC arm 1",200,0,100,2000,0,10000);
   hbbc_nhits[1]->GetXaxis()->SetTitle("BBC charge");
   hbbc_nhits[1]->GetYaxis()->SetTitle("Number of hits");
   hm->registerHisto(hbbc_nhits[1]);
@@ -206,15 +206,26 @@ int mMpcExAuAuAna::general_data_check_init(){
   hm->registerHisto(hkey_rawadc_low);
 
 
-  hbbc_adc[0] = new TH2D("hbbc_adc_arm0","ADC vs BBC charge Arm 0",400,0,4000,400,0,800000);
+  hbbc_adc[0] = new TH2D("hbbc_adc_arm0","ADC vs BBC charge Arm 0",400,0,400,400,0,200000);
   hbbc_adc[0]->GetXaxis()->SetTitle("BBC charge");
   hbbc_adc[0]->GetYaxis()->SetTitle("ADC value");
   hm->registerHisto(hbbc_adc[0]);
 
-  hbbc_adc[1] = new TH2D("hbbc_adc_arm1","ADC vs BBC charge Arm 1",400,0,4000,400,0,800000);
+  hbbc_adc[1] = new TH2D("hbbc_adc_arm1","ADC vs BBC charge Arm 1",400,0,400,400,0,80000);
   hbbc_adc[1]->GetXaxis()->SetTitle("BBC charge");
   hbbc_adc[1]->GetYaxis()->SetTitle("ADC value");
   hm->registerHisto(hbbc_adc[1]);
+
+  hbbc_adc_low[0] = new TH2D("hbbc_adc_low_arm0","ADC(low) vs BBC charge Arm 0",400,0,400,400,0,200000);
+  hbbc_adc_low[0]->GetXaxis()->SetTitle("BBC charge");
+  hbbc_adc_low[0]->GetYaxis()->SetTitle("ADC value(Low ADC)");
+  hm->registerHisto(hbbc_adc_low[0]);
+
+  hbbc_adc_low[1] = new TH2D("hbbc_adc_low_arm1","ADC(low) vs BBC charge Arm 1",400,0,400,400,0,30000);
+  hbbc_adc_low[1]->GetXaxis()->SetTitle("BBC charge");
+  hbbc_adc_low[1]->GetYaxis()->SetTitle("ADC value(Low ADC)");
+  hm->registerHisto(hbbc_adc_low[1]);
+
 
   hgrammy_high[0] = new Exogram("hgrammy_high0","Exogram high arm 0",900,-24,24,900,-24,24,8,-0.5,7.5);
   hm->registerHisto(hgrammy_high[0]);
@@ -227,6 +238,12 @@ int mMpcExAuAuAna::general_data_check_init(){
 
   hgrammy_low[1] = new Exogram("hgrammy_low1","Exogram low arm 1",900,-24,24,900,-24,24,8,-0.5,7.5);
   hm->registerHisto(hgrammy_low[1]);
+
+  hgrammy_combine[0] = new Exogram("hgrammy_combine0","Exogram Combine arm 0",900,-24,24,900,-24,24,8,-0.5,7.5);
+  hm->registerHisto(hgrammy_combine[0]);
+
+  hgrammy_combine[1] = new Exogram("hgrammy_combine1","Exogram Combine arm 1",900,-24,24,900,-24,24,8,-0.5,7.5);
+  hm->registerHisto(hgrammy_combine[1]);
 
   hlayer_adc_high[0] = new TH2D("hlayer_adc_high_arm0","Layer ADC high Arm 0",8,-0.5,7.5,300,-40.5,259.5);
   hlayer_adc_high[0]->GetXaxis()->SetTitle("layer");
@@ -254,12 +271,18 @@ int mMpcExAuAuAna::general_data_check_init(){
   htower_e->GetYaxis()->SetTitle("Tower E");
   hm->registerHisto(htower_e);
 
-  hadc_mpc_e[0] = new TH2D("hadc_mpc_e_arm0","MPC E vs ADC Arm 0",400,0,800000,400,0,2000);
+  htower_tdc = new TH2D("htower_tdc","MPC Tower tdc",576,-0.5,576-0.5,400,-200,200);
+  htower_tdc->GetXaxis()->SetTitle("MPC Channel");
+  htower_tdc->GetYaxis()->SetTitle("tdc");
+  hm->registerHisto(htower_tdc);
+
+
+  hadc_mpc_e[0] = new TH2D("hadc_mpc_e_arm0","MPC E vs ADC Arm 0",400,0,200000,400,0,400);
   hadc_mpc_e[0]->GetXaxis()->SetTitle("MPCEX ADC");
   hadc_mpc_e[0]->GetYaxis()->SetTitle("MPC E/GeV");
   hm->registerHisto(hadc_mpc_e[0]);
 
-  hadc_mpc_e[1] = new TH2D("hadc_mpc_e_arm1","MPC E vs ADC Arm 1",400,0,800000,400,0,2000);
+  hadc_mpc_e[1] = new TH2D("hadc_mpc_e_arm1","MPC E vs ADC Arm 1",400,0,80000,400,0,400);
   hadc_mpc_e[1]->GetXaxis()->SetTitle("MPCEX ADC");
   hadc_mpc_e[1]->GetYaxis()->SetTitle("MPC E/GeV");
   hm->registerHisto(hadc_mpc_e[1]);
@@ -268,17 +291,17 @@ int mMpcExAuAuAna::general_data_check_init(){
   for(int iarm = 0;iarm < 2;iarm++){
     for(int ilayer = 0;ilayer < 8;ilayer++){
       char hname[200];
-      sprintf(hname,"hadc_sensor_high_layer%d_arm%d",ilayer,iarm);
-      hadc_sensor_layer_high[iarm][ilayer] = new TH2D(hname,hname,24,-0.5,24-0.5,350,-50-0.5,300-0.5);
-      hadc_sensor_layer_high[iarm][ilayer]->GetXaxis()->SetTitle("Sensor");
-      hadc_sensor_layer_high[iarm][ilayer]->GetYaxis()->SetTitle("high ADC");
-      hm->registerHisto(hadc_sensor_layer_high[iarm][ilayer]);
+//      sprintf(hname,"hadc_sensor_high_layer%d_arm%d",ilayer,iarm);
+//      hadc_sensor_layer_high[iarm][ilayer] = new TH2D(hname,hname,24,-0.5,24-0.5,350,-50-0.5,300-0.5);
+//      hadc_sensor_layer_high[iarm][ilayer]->GetXaxis()->SetTitle("Sensor");
+//      hadc_sensor_layer_high[iarm][ilayer]->GetYaxis()->SetTitle("high ADC");
+//      hm->registerHisto(hadc_sensor_layer_high[iarm][ilayer]);
           
-      sprintf(hname,"hadc_sensor_low_layer%d_arm%d",ilayer,iarm);
-      hadc_sensor_layer_low[iarm][ilayer] = new TH2D(hname,hname,24,-0.5,24-0.5,350,-50-0.5,300-0.5);
-      hadc_sensor_layer_low[iarm][ilayer]->GetXaxis()->SetTitle("Sensor");
-      hadc_sensor_layer_low[iarm][ilayer]->GetYaxis()->SetTitle("low ADC");
-      hm->registerHisto(hadc_sensor_layer_low[iarm][ilayer]);
+//      sprintf(hname,"hadc_sensor_low_layer%d_arm%d",ilayer,iarm);
+//      hadc_sensor_layer_low[iarm][ilayer] = new TH2D(hname,hname,24,-0.5,24-0.5,350,-50-0.5,300-0.5);
+//      hadc_sensor_layer_low[iarm][ilayer]->GetXaxis()->SetTitle("Sensor");
+//      hadc_sensor_layer_low[iarm][ilayer]->GetYaxis()->SetTitle("low ADC");
+//      hm->registerHisto(hadc_sensor_layer_low[iarm][ilayer]);
       for(int isen = 0;isen< 24;isen++){
         sprintf(hname,"hHL_sensor_arm%d_layer%d_sensor%d",iarm,ilayer,isen);
 	hHL_sensor[iarm][ilayer][isen] = new TH2D(hname,hname,350,-50-0.5,300-0.5,350,-50-0.5,300-0.5);
@@ -319,8 +342,10 @@ int mMpcExAuAuAna::general_data_check_study(){
     hHL_sensor_raw[arm][layer][sensor_index]->Fill(low_adc,high_adc);
     
     TMpcExCalib *calib = _mpcex_calib_container->get(key);
-    if(calib->high_dead_hot_status()>0)hkey_rawadc_high->Fill(key,high_adc);
-    if(calib->low_dead_hot_status()>0)hkey_rawadc_low->Fill(key,low_adc);
+//    if(calib->high_dead_hot_status()>0)hkey_rawadc_high->Fill(key,high_adc);
+    hkey_rawadc_high->Fill(key,high_adc);
+//    if(calib->low_dead_hot_status()>0)hkey_rawadc_low->Fill(key,low_adc);
+    hkey_rawadc_low->Fill(key,low_adc);
 //    if(high_adc > 0){
 //      hgrammy_high[arm]->FillEx(key,high_adc);
 //    }
@@ -342,6 +367,7 @@ int mMpcExAuAuAna::general_data_check_study(){
   
   int Nhits = _mpcex_hit_container->size();
   double Arm_totAdc[2] = {0,0};
+  double Arm_totAdc_low[2] = {0,0};
   int Arm_Nhits_layer_high[2][8] = {{0.}};
   int Arm_Nhits_layer_low[2][8] = {{0.}};
   int Arm_Nhits[2] = {0,0};
@@ -365,11 +391,12 @@ int mMpcExAuAuAna::general_data_check_study(){
 //      if(high_q > 0)hgrammy_high[arm]->FillEx(key,high_q);
 //      if(low_q > 0)hgrammy_low[arm]->FillEx(key,low_q);
     TMpcExCalib *calib = _mpcex_calib_container->get(key);
-    if(calib->high_dead_hot_status()>0)hkey_adc_high->Fill(key,high_q);
-    if(calib->low_dead_hot_status()>0)hkey_adc_low->Fill(key,low_q);
-
+//    if(calib->high_dead_hot_status()>0)hkey_adc_high->Fill(key,high_q);
+    hkey_adc_high->Fill(key,high_q);
+//    if(calib->low_dead_hot_status()>0)hkey_adc_low->Fill(key,low_q);
+    hkey_adc_low->Fill(key,low_q);
     if(hit->isGoodHighHit()){
-      hadc_sensor_layer_high[arm][layer]->Fill(sensor_index,high_q);
+//      hadc_sensor_layer_high[arm][layer]->Fill(sensor_index,high_q);
       Arm_totAdc[arm] += high_q;
       layer_adc_high[arm][layer] += high_q; 
       Arm_Nhits_layer_high[arm][layer]++;
@@ -377,11 +404,18 @@ int mMpcExAuAuAna::general_data_check_study(){
 //      hkey_adc_high->Fill(key,high_q);
     }
     if(hit->isGoodLowHit()){
-      hadc_sensor_layer_low[arm][layer]->Fill(sensor_index,low_q);
+//      hadc_sensor_layer_low[arm][layer]->Fill(sensor_index,low_q);
+      Arm_totAdc_low[arm] += low_q;
       layer_adc_low[arm][layer] += low_q;
       Arm_Nhits_layer_low[arm][layer]++;
       if(low_q > 0)hgrammy_low[arm]->FillEx(key,low_q);
 //      hkey_adc_low->Fill(key,low_q);
+    }
+    if(hit->isGoodHighHit() && high_q > 0){
+      hgrammy_combine[arm]->FillEx(key,high_q);
+    }
+    else{
+      if(hit->isGoodLowHit() && low_q > 0)hgrammy_combine[arm]->FillEx(key,low_q*4.5);
     }
   }
   
@@ -393,14 +427,17 @@ int mMpcExAuAuAna::general_data_check_study(){
     mpcTowerContent* tower = _mpc_tower_container->getTower(i);
     double tower_e = tower->get_energy();
     double tower_ch = tower->get_ch();
+    double tdc = tower->get_tof();
     int arm = 0;
     if(tower_ch > 288) arm = 1;
     if(tower_e > 0) Tot_Mpc_e[arm] += tower_e;
     htower_e->Fill(tower_ch,tower_e);
+    htower_tdc->Fill(tower_ch,tdc);
   }
 
   for(int iarm = 0;iarm < 2;iarm++){
     hbbc_adc[iarm]->Fill(_bbc_charge[iarm],Arm_totAdc[iarm]);
+    hbbc_adc_low[iarm]->Fill(_bbc_charge[iarm],Arm_totAdc_low[iarm]);
     hadc_mpc_e[iarm]->Fill(Arm_totAdc[iarm],Tot_Mpc_e[iarm]);
 //    cout <<Arm_totAdc[iarm]<<" "<<_bbc_charge[iarm]<<" "<<Tot_Mpc_e[iarm]<<endl;
     hbbc_nhits[iarm]->Fill(_bbc_charge[iarm],Arm_Nhits[iarm]);
@@ -489,7 +526,7 @@ int mMpcExAuAuAna::lshower_study(){
     double mpcE3x3 = lshower->get_mpc_e3x3();
     double mpcex_e = lshower->get_mpcex_e();
 //    if(mpcex_e < 1.5) continue;
-//    cout <<"fired layers: "<<lshower->get_n_fired_layers()<<endl;
+//cout <<"fired layers: "<<lshower->get_n_fired_layers()<<endl;
     if(lshower->get_n_fired_layers() < 7) continue;
     double towr_dx = lshower->get_closest_tower_dx();
     double towr_dy = lshower->get_closest_tower_dy();
@@ -498,7 +535,8 @@ int mMpcExAuAuAna::lshower_study(){
     hclosest_tower[arm]->Fill(towr_dx,towr_dy);
     hclosest_clus_dx_bbc[arm]->Fill(_bbc_charge[arm],clus_dx);
     hclosest_clus_dy_bbc[arm]->Fill(_bbc_charge[arm],clus_dy);
-    if(mpcex_e < 1.5 &&_bbc_charge[arm] < 100)hclosest_cluster[arm]->Fill(clus_dx,clus_dy);
+//cout <<"mpcex e: "<<mpcex_e<<" bbc charge: "<<_bbc_charge[arm]<<endl;
+    if(mpcex_e > 1.5 &&_bbc_charge[arm] < 200)hclosest_cluster[arm]->Fill(clus_dx,clus_dy);
     if(lshower->get_n_fired_layers() == 8 && lshower->get_hits_num() == 8){
       for(int ilayer = 0;ilayer < 8;ilayer++){
         double layer_e = lshower->get_e_layer(ilayer);
@@ -657,6 +695,7 @@ int mMpcExAuAuAna::lshower_random_match(){
   if(used){
     mycluster_list.clear();
     int Nclusters = _mpc_cluster_container->size();
+//cout <<"Number of clusters: "<<Nclusters<<endl;
     for(int i = 0;i < Nclusters;i++){
       mpcClusterContent* clus = _mpc_cluster_container->getCluster(i);
       int arm = clus->arm();
